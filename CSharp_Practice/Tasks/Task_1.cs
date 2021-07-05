@@ -4,24 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+
 #nullable enable
+
 namespace Tasks
 {
     //TODO: ask why IEnumerable<out T> not works (or works only for interface)
-    class Advanced_Enum<T> : IEnumerable<T>
-    {
-        public Advanced_Enum(T[] elems)
-        {
-            _elems = elems.OfType<T>().ToList();
-        }
-
-        public Advanced_Enum(Advanced_Enum<T> right)
-        {
-            _elems = right._elems.OfType<T>().ToList();
-        }
-
-        public List<T> _elems = new List<T>();
-        public IEnumerator<T> Elements => _elems.GetEnumerator();
+    static class Advanced_Enum<T>
+         where T : IEnumerable
+    { 
 
         /// <summary> Генерация всех возможных сочетаний из n по k
         /// 
@@ -31,7 +22,7 @@ namespace Tasks
         /// 
         /// <para>int k - порядок</para>
         /// </summary>
-        public IEnumerator<IEnumerator<T>> Combine(int k) => combination(k);
+        public static IEnumerable<IEnumerable<T>> Combine(T[] elems,int k) => combination(elems,k);
 
         /// <summary> генерация всех возможных подмножеств (без повторений)
         /// 
@@ -39,7 +30,7 @@ namespace Tasks
         /// 
         /// Выходное перечисление: [ [], [1], [2], [1, 2] ]
         /// </summary>
-        public IEnumerator<IEnumerator<T>> Subset => subsetting();
+        public static IEnumerable<IEnumerable<T>> Subset(T[] elems) => subsetting(elems);
 
         /// <summary> генерация всех возможных перестановок 
         /// 
@@ -47,98 +38,95 @@ namespace Tasks
         /// 
         /// Выходное перечисление: [ [1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1,2], [3, 2, 1] ]
         /// </summary>
-        public IEnumerator<IEnumerator<T>> Permutations => permutationing();
+        public static IEnumerable<IEnumerable<T>> Permutations(T[] elems) => permutationing(elems);
 
 
-        private IEnumerator<IEnumerator<T>> combination(int k)
-            //wtf with casts
+        private static IEnumerable<IEnumerable<T>> combination(T[] elems,int k)
         {
-            var ret = Enumerable.Empty<IEnumerator<T>>();
+            var ret = new List< IEnumerable < T >> ();
 
-            for(int i=0; i< _elems.Count()-1 ; i++)
+            for(int i=0; i< elems.Count()-1 ; i++)
             {
-                T it = _elems[i];
+                T it = elems[i];
 
                 T[] comb = new T[k];
 
                 int iter = 0;
 
-                for (int j=i; j< _elems.Count();j++)
+                for (int j=i; j< elems.Count();j++)
                 {
                     
                     if (iter+1==k-1) {
                         iter = 0;
                         comb[k - 1] = it; 
                         Array.Sort(comb);
-                        ret = ret.Union( (IEnumerable<IEnumerator<T>>) comb.GetEnumerator());
+                        
+                        ret.Add(GetEnum(comb));
                     }
-                    comb[iter++] = _elems[j];
+                    comb[iter++] = elems[j];
 
                 }
 
             }
 
-            return ret.GetEnumerator();
+            return ret;
         }
 
-        private IEnumerator<IEnumerator<T>> subsetting()
-        {
-            var ret = Enumerable.Empty<IEnumerator<T>>();
+        private static IEnumerable<T> GetEnum(T[] mas) // попытка в корутины (в Unity просто время тыкал и было норм, а тут вот это)
 
-            int k = _elems.Count();
+        {
+            foreach(T iter in mas)
+                yield return iter;
+        }
+
+        private static IEnumerable<IEnumerable<T>> subsetting(T[] elems)
+        {
+            var ret = new List<IEnumerable<T>>();
+
+            int k = elems.Count();
 
             for(int dim=2;dim<=k; dim++)
-            for (int i = 0; i < _elems.Count() - 1; i++)
+            for (int i = 0; i < elems.Count() - 1; i++)
             {
-                T it = _elems[i];
+                T it = elems[i];
 
                 T[] comb = new T[dim];
 
                 int iter = 0;
-                ret.Union((IEnumerable<IEnumerator<T>>)((new T[] {it}).GetEnumerator()));
+                ret.Add(GetEnum(new T[] { it}));
 
-                for (int j = i; j < _elems.Count(); j++)
+                for (int j = i; j < elems.Count(); j++)
                 {
                     if (iter + 1 == dim - 1)
                     {
                         iter = 0;
                         comb[dim - 1] = it;
                         Array.Sort(comb);
-                        ret = ret.Union((IEnumerable<IEnumerator<T>>)comb.GetEnumerator());
-                    }
-                    comb[iter++] = _elems[j];
+                            ret.Add(GetEnum(comb));
+                        }
+                    comb[iter++] = elems[j];
 
                 }
 
             }
 
-            return ret.GetEnumerator();
+            return ret;
         }
 
-        private IEnumerator<IEnumerator<T>> permutationing()
+        private static IEnumerable<IEnumerable<T>> permutationing(T[] elems)
         {
-            var ret = Enumerable.Empty<IEnumerator<T>>();
+            var ret = new List<IEnumerable<T>>();
 
-            var under = Enumerable.Empty<T>();
+            foreach(T iter in elems)
+            {
 
-            return ret.GetEnumerator();
+                
+                
+            }
+
+            return ret;
         }
 
-
-        public IEnumerator GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     class Advance_Comparator<T> : IEqualityComparer<T>
