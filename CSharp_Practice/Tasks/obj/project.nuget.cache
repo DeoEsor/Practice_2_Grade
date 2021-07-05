@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "6F8lYNOPHNcwt8I2me2zZ5QpH9MY65QHXUtYgbIccXsHdUSMiI1wqox9lW7/7OUWLaW8uA1BvJnWAu7xNBNT6Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Rulia\\Documents\\Practice_2_Grade\\CSharp_Practice\\Tasks\\Tasks.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Rulia\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
+    "C:\\Users\\Rulia\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.10\\microsoft.netcore.app.host.win-x64.3.1.10.nupkg.sha512"
+  ],
+  "logs": []
+}

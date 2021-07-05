@@ -1,0 +1,13 @@
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.csprojAssemblyReference.cache
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.AssemblyInfoInputs.cache
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.AssemblyInfo.cs
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.csproj.CoreCompileInputs.cache
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.exe
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.deps.json
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.runtimeconfig.json
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.runtimeconfig.dev.json
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.dll
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\bin\Debug\netcoreapp3.1\CSharp_Practice.pdb
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.dll
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.pdb
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\obj\Debug\netcoreapp3.1\CSharp_Practice.genruntimeconfig.cache

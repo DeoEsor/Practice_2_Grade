@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Rulia\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Rulia\\.nuget\\packages"
+    ]
+  }
+}
