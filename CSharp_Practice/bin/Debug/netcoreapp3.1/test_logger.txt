@@ -1,0 +1,6 @@
+[05.07.2021 23:38:05] [critical]: Evening Deploy
+
+[05.07.2021 23:41:31] [warning]: Evening Deploy
+[05.07.2021 23:41:31] [debug]: Evening Deploy
+[05.07.2021 23:41:31] [error]: Evening Deploy
+[05.07.2021 23:41:31] [critical]: Evening Deploy
