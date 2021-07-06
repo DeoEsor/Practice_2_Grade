@@ -1,0 +1,4 @@
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\Tasks\obj\Debug\netcoreapp3.1\Tasks.csprojAssemblyReference.cache
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\Tasks\obj\Debug\netcoreapp3.1\Tasks.AssemblyInfoInputs.cache
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\Tasks\obj\Debug\netcoreapp3.1\Tasks.AssemblyInfo.cs
+C:\Users\Rulia\Documents\Practice_2_Grade\CSharp_Practice\Tasks\obj\Debug\netcoreapp3.1\Tasks.csproj.CoreCompileInputs.cache

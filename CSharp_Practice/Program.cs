@@ -43,7 +43,7 @@ namespace CSharp_Practice
             }
             Console.WriteLine();
             #endregion
-
+            /*
             #region Task-2-test
             Pragma pragma = new Pragma();
 
@@ -61,13 +61,14 @@ namespace CSharp_Practice
 
 
 
-            for (int i = 0; i < dataArray.Length; i++)
-            {
-                Console.WriteLine(dataArray[i]);
+            for (int i = 0; i < dataArray.Length; i++)      Console.WriteLine(dataArray[i]);
 
-            }
+
+            
             str.Close();
             #endregion
+
+            */
         }
     }
 }
