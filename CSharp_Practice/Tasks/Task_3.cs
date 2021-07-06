@@ -14,11 +14,11 @@ namespace Tasks
 максимальный размер, то добавляемая запись замещает самую старую
 запись в кэше. Продемонстрировать работу класса.
 */
-class Cash<T>
-{
+class Cash<T> where T : new()
+    {
         static Dictionary<string,T> _cash = new System.Collections.Generic.Dictionary<string,T>();
 
-        static SortedDictionary<int, string> _timetable = new SortedDictionary<int, string>();
+        static SortedList<int, string> _timetable = new SortedList<int, string>();
 
         int _size;
 
@@ -35,29 +35,48 @@ class Cash<T>
 
         private static void SetTimer(TimeSpan time)
         {
-            aTimer = new System.Timers.Timer(time.Ticks/5);
+            aTimer = new System.Timers.Timer((int)(time.Ticks/5));
             aTimer.Elapsed += OnTimedEvent;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
+            Console.WriteLine((int)(time.Ticks / 5));
         }
 
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            if (_cash.Count == 0) return;
+            var died = new List<int>();
+
+            var calc = new Dictionary<int, int>();
+            
+                if (_cash.Count == 0) return;
             foreach(var date in _timetable)
             {
                 int interval=date.Key - (int)_time.Ticks / 5;
-                if (interval <= 0) {
-                    _cash.Remove(date.Value);
-                    _timetable.Remove(date.Key);
-                }
+
+                if (interval <= 0) 
+                    died.Add(date.Key);
                 else//TODO: ...oh... create new dictionary with calculations, after it _cash= {new dcitionary} 
                 // UPD:: mb random time of calling Save can save situation
                 {
-                    _timetable[interval] = date.Value;
-                    _timetable.Remove(date.Key);
+                    calc.Add(date.Key, interval);
                 }
             }
+
+            foreach (int it in died)
+            {
+                Console.WriteLine($" Deleted {_timetable[it]} ");
+                _cash.Remove(_timetable[it]);
+                _timetable.Remove(it);
+            }
+            foreach (var it in calc)
+            {
+                Console.WriteLine($" SpendTine {it.Key} {it.Value} ");
+                if (_timetable.ContainsKey(it.Key)) { 
+                    _timetable.Add(it.Value, _timetable[it.Key]);
+                    _timetable.Remove(it.Key);
+                }
+            }
+
             return;
         }
 
@@ -72,14 +91,14 @@ class Cash<T>
         {
             try
             {
-                if (!_cash.ContainsKey(key)) throw new KeyNotFoundException("Value associated was null");
+                if (!_cash.ContainsKey(key)) throw new KeyNotFoundException($"Value associated with {key} was null");
 
                 else return _cash[key];
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error: {e.Message}");
-                return (T) new Object();
+                return new T();
             }
         }
         /// <summary>
