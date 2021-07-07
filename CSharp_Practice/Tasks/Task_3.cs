@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
+using System.Threading;
+
 namespace Tasks
 {
     /*На языке C# реализовать класс, представляющий собой универсальный
@@ -14,8 +16,11 @@ namespace Tasks
 максимальный размер, то добавляемая запись замещает самую старую
 запись в кэше. Продемонстрировать работу класса.
 */
-class Cash<T> where T : new()
+class  Cash<T> where T : new()
     {
+
+        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
+
         static Dictionary<string,T> _cash = new System.Collections.Generic.Dictionary<string,T>();
 
         static SortedList<int, string> _timetable = new SortedList<int, string>();
@@ -42,42 +47,48 @@ class Cash<T> where T : new()
             Console.WriteLine((int)(time.Ticks / 5));
         }
 
-        private static void OnTimedEvent(Object source, ElapsedEventArgs e)
+        private static async void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            var died = new List<int>();
+            cacheLock.EnterReadLock();
+            try { 
+                var died = new List<int>();
 
-            var calc = new Dictionary<int, int>();
+                var calc = new Dictionary<int, int>();
             
-                if (_cash.Count == 0) return;
-            foreach(var date in _timetable)
-            {
-                int interval=date.Key - (int)_time.Ticks / 5;
-
-                if (interval <= 0) 
-                    died.Add(date.Key);
-                else//TODO: ...oh... create new dictionary with calculations, after it _cash= {new dcitionary} 
-                // UPD:: mb random time of calling Save can save situation
+                    if (_cash.Count == 0) return;
+                
+                foreach(var date in _timetable)
                 {
-                    calc.Add(date.Key, interval);
-                }
-            }
+                    int interval=date.Key - (int)_time.Ticks / 5;
 
-            foreach (int it in died)
-            {
-                Console.WriteLine($" Deleted {_timetable[it]} ");
-                _cash.Remove(_timetable[it]);
-                _timetable.Remove(it);
-            }
-            foreach (var it in calc)
-            {
-                Console.WriteLine($" SpendTine {it.Key} {it.Value} ");
-                if (_timetable.ContainsKey(it.Key)) { 
-                    _timetable.Add(it.Value, _timetable[it.Key]);
-                    _timetable.Remove(it.Key);
+                    if (interval <= 0) 
+                        died.Add(date.Key);
+                    else//TODO: ...oh... create new dictionary with calculations, after it _cash= {new dcitionary} 
+                    // UPD:: mb random time of calling Save can save situation
+                        calc.Add(date.Key, interval);
                 }
-            }
 
-            return;
+                foreach (int it in died)
+                {
+                    Console.WriteLine($" Deleted {_timetable[it]} ");
+                    _cash.Remove(_timetable[it]);
+                    _timetable.Remove(it);
+                }
+                foreach (var it in calc)
+                {
+                    Console.WriteLine($" SpendTine {it.Key} {it.Value} ");
+                    if (_timetable.ContainsKey(it.Key)) { 
+                        _timetable.Add(it.Value, _timetable[it.Key]);
+                        _timetable.Remove(it.Key);
+                    }
+                }
+
+                return;
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
+            }
         }
 
         /// <summary>
@@ -89,6 +100,7 @@ class Cash<T> where T : new()
         /// <returns> 0 if process for sucessful eles -1 or Error Code  with exception</returns>
         public T Get(string key)
         {
+            cacheLock.EnterReadLock();
             try
             {
                 if (!_cash.ContainsKey(key)) throw new KeyNotFoundException($"Value associated with {key} was null");
@@ -99,6 +111,10 @@ class Cash<T> where T : new()
             {
                 Console.WriteLine($"Error: {e.Message}");
                 return new T();
+            }
+            finally
+            {
+                cacheLock.ExitReadLock();
             }
         }
         /// <summary>
@@ -111,6 +127,7 @@ class Cash<T> where T : new()
         /// <returns></returns>
         public int Save(T data,string key)
         {
+            cacheLock.EnterWriteLock();
             try {
                 if (_cash.ContainsKey(key)) throw new ArgumentException("Key was restored for another day");
                 if (_cash.Count == _size) {
@@ -136,6 +153,10 @@ class Cash<T> where T : new()
             {
                 Console.WriteLine($"Error: {e.Message}");
                 return -1;
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
             }
         }
     }

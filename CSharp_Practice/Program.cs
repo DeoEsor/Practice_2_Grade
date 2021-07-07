@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Tasks;
+using System.Threading;
 
 namespace CSharp_Practice
 {
@@ -76,13 +77,13 @@ namespace CSharp_Practice
             cash.Save(3, "Third");
             cash.Save(7, "first");
 
-            System.Threading.Thread.Sleep(400);
+            Thread.Sleep(400);
 
             Console.WriteLine(cash.Get("first"));
 
             Console.WriteLine(cash.Get("Fouth"));
 
-            System.Threading.Thread.Sleep(600);
+            Thread.Sleep(600);
 
             Console.WriteLine(cash.Get("first"));
 
