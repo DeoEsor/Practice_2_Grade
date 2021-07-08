@@ -23,7 +23,7 @@ class  Cash<T> where T : new()
 
         static Dictionary<string,T> _cash = new System.Collections.Generic.Dictionary<string,T>();
 
-        static SortedList<int, string> _timetable = new SortedList<int, string>();
+        static SortedList<float, string> _timetable = new SortedList<float, string>();
 
         int _size;
 
@@ -51,15 +51,15 @@ class  Cash<T> where T : new()
         {
             cacheLock.EnterWriteLock();
             try { 
-                var died = new List<int>();
+                var died = new List<float>();
 
-                var calc = new Dictionary<int, int>();
+                var calc = new Dictionary<float, float>();
             
                     if (_cash.Count == 0) return;
                 
                 foreach(var date in _timetable)
                 {
-                    int interval=date.Key - (int)_time.Ticks / 5;
+                    float interval=date.Key - _time.Ticks / 5.0f;
 
                     if (interval <= 0) 
                         died.Add(date.Key);
