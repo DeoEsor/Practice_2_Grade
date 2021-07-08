@@ -14,7 +14,7 @@ namespace Tasks
         severity в следующем формате:
         [<Date> <Time>] [<severity>]: <data>
         В классе реализовать необходимые интерфейсы.*/
-    internal class Logger
+    internal class Logger :IDisposable
     {
         private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
 
@@ -30,6 +30,8 @@ namespace Tasks
         protected Logger()
         {
         }
+
+        
 
         private Logger(string filepath)
         {
@@ -48,9 +50,7 @@ namespace Tasks
             cacheLock.EnterWriteLock();
             try { 
             fs.Write($"{Environment.NewLine}[{DateTime.Now}] [{severity}]: {data}");
-            fs.Flush();
-            fs.Close();   
-            fs.Dispose();
+            
                 return 0;
             }
             finally
@@ -59,7 +59,13 @@ namespace Tasks
             }
             
         }
-        
+
+        public void Dispose()
+        {
+            fs.Flush();
+            fs.Close();
+            fs.Dispose();
+        }
     }
 
     class Pragma
@@ -94,6 +100,8 @@ namespace Tasks
 
         public int DoSmth()
         {
+            try {
+                if (Logger==null) throw new DirectoryNotFoundException( "Logger or filepath can be equal null pls relaunch Pragma");
             Message mes;
             if (DateTime.Now.Hour < 12)
                 mes = DeployMorning;
@@ -104,6 +112,18 @@ namespace Tasks
             mes();
             Logger.Log(_syslog.data,_syslog.severity);
             return 0;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+                return -1;
+            }
+        }
+
+        public void Dispose()
+        {
+            Logger.Dispose();
+            Logger=null;
         }
     }
 }

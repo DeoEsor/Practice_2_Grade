@@ -45,29 +45,29 @@ namespace CSharp_Practice
             //Console.WriteLine();
             //#endregion
             
-            //#region Task-2-test
-            //Pragma pragma = new Pragma();
+            #region Task-2-test
+            Pragma pragma = new Pragma();
 
-            //pragma.Launch("test_logger.txt");
+            pragma.Launch("test_logger.txt");
 
-            //pragma.DoSmth();
-            //pragma.DoSmth();
-            //pragma.DoSmth();
-            //pragma.DoSmth();
+            pragma.DoSmth();
+            pragma.DoSmth();
+            pragma.DoSmth();
+            pragma.DoSmth();
+            pragma.Dispose();
+            FileStream filoviyPotok = new FileStream("test_logger.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            StreamReader str = new StreamReader(filoviyPotok);
+            string data = str.ReadToEnd();
+            string[] dataArray = data.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-            //FileStream filoviyPotok = new FileStream("test_logger.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-            //StreamReader str = new StreamReader(filoviyPotok);
-            //string data = str.ReadToEnd();
-            //string[] dataArray = data.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
 
-
-            //for (int i = 0; i < dataArray.Length; i++)      Console.WriteLine(dataArray[i]);
+            for (int i = 0; i < dataArray.Length; i++)      Console.WriteLine(dataArray[i]);
 
 
             
-            //str.Close();
-            //#endregion
+            str.Close();
+            #endregion
 
             #region Task-3_test
             Cash<int> cash = new Cash<int>(new TimeSpan(500), 5); // 5 - size of casch with timelife 0.5 sec
