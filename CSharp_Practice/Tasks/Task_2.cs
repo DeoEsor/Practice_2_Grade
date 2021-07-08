@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 namespace Tasks
 {
@@ -15,11 +16,11 @@ namespace Tasks
         В классе реализовать необходимые интерфейсы.*/
     internal class Logger
     {
-        static string _filepath;
+        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
 
         private static Logger instance;
-
-        public enum Severity
+        private static StreamWriter fs;
+        internal enum Severity
         {
             race, debug,
             information,
@@ -32,7 +33,7 @@ namespace Tasks
 
         private Logger(string filepath)
         {
-            _filepath = filepath;
+            fs = new StreamWriter(filepath, true);
         }
 
         public static Logger getInstance(string name)
@@ -44,31 +45,35 @@ namespace Tasks
 
         public static int Log(string data, Severity severity)
         {
-            using (FileStream fs = new FileStream(_filepath, FileMode.Append, FileAccess.Write))
+            cacheLock.EnterWriteLock();
+            try { 
+            fs.Write($"{Environment.NewLine}[{DateTime.Now}] [{severity}]: {data}");
+            fs.Flush();
+            fs.Close();   
+            fs.Dispose();
+                return 0;
+            }
+            finally
             {
-                byte[] array = System.Text.Encoding.Default.GetBytes($"{Environment.NewLine}[{DateTime.Now}] [{severity}]: {data}");
-                fs.Write(array, 0, array.Length);
-                fs.Flush();
-                fs.Close();
+                cacheLock.ExitWriteLock();
             }
             
-            return 0;
         }
         
     }
 
-    class Pragma : Logger
+    class Pragma
     {
         delegate void Message();
         private struct syslog
         {
             public string data { get; set; }
-            public Severity severity { get; set; }
+            public Logger.Severity severity { get; set; }
         }
 
         static syslog _syslog;
         static Random random = new Random();
-        static Array values = Enum.GetValues(typeof(Severity));
+        static Array values = Enum.GetValues(typeof(Logger.Severity));
 
         public Logger Logger { get; set; }
         public void Launch(string path)
@@ -79,12 +84,12 @@ namespace Tasks
         private void  DeployMorning()
         {
             _syslog.data = "Morning Deploy";
-            _syslog.severity = (Severity)values.GetValue(random.Next(values.Length));
+            _syslog.severity = (Logger.Severity)values.GetValue(random.Next(values.Length));
         }
         private static void DeployEvening()
         {
             _syslog.data= "Evening Deploy" ;
-            _syslog.severity = (Severity) values.GetValue(random.Next(values.Length));
+            _syslog.severity = (Logger.Severity) values.GetValue(random.Next(values.Length));
         }
 
         public int DoSmth()

@@ -49,7 +49,7 @@ class  Cash<T> where T : new()
 
         private static async void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            cacheLock.EnterReadLock();
+            cacheLock.EnterWriteLock();
             try { 
                 var died = new List<int>();
 
