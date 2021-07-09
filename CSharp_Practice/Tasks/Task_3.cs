@@ -23,7 +23,7 @@ class  Cash<T> where T : new()
 
         static Dictionary<string,T> _cash = new System.Collections.Generic.Dictionary<string,T>();
 
-        static SortedList<float, string> _timetable = new SortedList<float, string>();
+        static SortedList<DateTime, string> _timetable = new SortedList<DateTime, string>();
 
         int _size;
 
@@ -51,36 +51,21 @@ class  Cash<T> where T : new()
         {
             cacheLock.EnterWriteLock();
             try { 
-                var died = new List<float>();
-
-                var calc = new Dictionary<float, float>();
+                var died = new List<DateTime>();
             
                     if (_cash.Count == 0) return;
                 
                 foreach(var date in _timetable)
                 {
-                    float interval=date.Key - _time.Ticks / 5.0f;
-
-                    if (interval <= 0) 
+                    if (date.Key>= DateTime.Now) 
                         died.Add(date.Key);
-                    else//TODO: ...oh... create new dictionary with calculations, after it _cash= {new dcitionary} 
-                    // UPD:: mb random time of calling Save can save situation
-                        calc.Add(date.Key, interval);
                 }
 
-                foreach (int it in died)
+                foreach (var it in died)
                 {
-                    Console.WriteLine($" Deleted {_timetable[it]} ");
+                    Console.WriteLine($" Deleted obj {_timetable[it]} ");
                     _cash.Remove(_timetable[it]);
                     _timetable.Remove(it);
-                }
-                foreach (var it in calc)
-                {
-                    Console.WriteLine($" SpendTine {it.Key} {it.Value} ");
-                    if (_timetable.ContainsKey(it.Key)) { 
-                        _timetable.Add(it.Value, _timetable[it.Key]);
-                        _timetable.Remove(it.Key);
-                    }
                 }
 
                 return;
@@ -131,8 +116,8 @@ class  Cash<T> where T : new()
             try {
                 if (_cash.ContainsKey(key)) throw new ArgumentException("Key was restored for another day");
                 if (_cash.Count == _size) {
-                    int lowwest = (int)_time.Ticks + 1;
-                    foreach (int it in _timetable.Keys)
+                    DateTime lowwest = DateTime.Now+_time;
+                    foreach (var it in _timetable.Keys)
                         if(it<lowwest) lowwest = it;
 
                     _cash.Remove(_timetable[lowwest]);
@@ -140,12 +125,12 @@ class  Cash<T> where T : new()
 
 
                     _cash[key] = data;
-                    _timetable[(int)_time.Ticks] = key;
+                    _timetable[DateTime.Now + _time] = key;
                 }
                 else
                 {
                     _cash[key] = data;
-                    _timetable[(int)_time.Ticks]= key;
+                    _timetable[DateTime.Now + _time]= key;
                 }
                 return 0;
             }
