@@ -68,7 +68,7 @@ namespace CSharp_Practice
             
             str.Close();
             #endregion
-
+            /*
             #region Task-3_test
             Cash<int> cash = new Cash<int>(new TimeSpan(500), 5); // 5 - size of casch with timelife 0.5 sec
 
@@ -90,6 +90,7 @@ namespace CSharp_Practice
             Console.ReadLine();
 
             #endregion
+            */
         }
     }
 }
