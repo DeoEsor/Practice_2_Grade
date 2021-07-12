@@ -46,23 +46,26 @@ namespace CSharp_Practice
             //#endregion
             
             #region Task-2-test
-            Pragma pragma = new Pragma();
-
-            pragma.Launch("test_logger.txt");
+            Pragma pragma = new Pragma("test_logger.txt");
 
             pragma.DoSmth();
             pragma.DoSmth();
             pragma.DoSmth();
             pragma.DoSmth();
             pragma.Dispose();
-            FileStream filoviyPotok = new FileStream("test_logger.txt", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-            StreamReader str = new StreamReader(filoviyPotok);
+
+            StreamReader str = new StreamReader("test_logger.txt");
+            
             string data = str.ReadToEnd();
-            string[] dataArray = data.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            str.Close();
+
+            str.Dispose();
+
+            Array dataArray = data.Split(Environment.NewLine);
 
 
-
-            for (int i = 0; i < dataArray.Length; i++)      Console.WriteLine(dataArray[i]);
+            Console.WriteLine(dataArray);
 
 
             

@@ -13,33 +13,28 @@ namespace Field_theory{
     /// <summary>
     ///     GF ( 2^8 ), where 2 - field characteristics, 8 - field order
     /// </summary>
-static class Field_Galuas 
+static class Field_Galois 
 {   
 private:
-    static const size_t field_charac = 0b1;
+    static const size_t field_charac = 0b10;
     static const size_t field_order = 0b1000;
 
     const size_t max_even = pow(field_charac,field_order) - field_charac;
 public:
 #pragma region Constructors + singlton
-    Field_Galuas(Field_Galuas& other) = delete;
+    Field_Galois(Field_Galois& other) = delete;
 
-    void operator=(const Field_Galuas&) = delete;
-    void operator+=(const Field_Galuas&) = delete;
-    void operator-=(const Field_Galuas&) = delete;
-    void operator*=(const Field_Galuas&) = delete;
+    void operator=(const Field_Galois&) = delete;
+    void operator+=(const Field_Galois&) = delete;
+    void operator-=(const Field_Galois&) = delete;
+    void operator*=(const Field_Galois&) = delete;
 
-    Field_Galuas()//TODO: синглтон + легковес(мб построить дерево типов)
+    Field_Galois()//TODO: синглтон + легковес(мб построить дерево типов)
     {
-        if (instance != nullptr){
-            delete this; return;
-        }
-        else
-            instance = this;
         irred_poly();
     }
 
-    ~Field_Galuas() {
+    ~Field_Galois() {
         ir_poly.clear();
     }
 #pragma endregion
@@ -77,7 +72,7 @@ public:
         size_t res=0;
 
         for (; poly > 0; poly >>= 0b1)  if ((poly & 0b1) == 0b1) res++;
-
+        //0b101010
         return res;
     }
     /// <summary>
@@ -132,12 +127,12 @@ public:
     static void irred_poly()
     {
         size_t i = 0;
-        for (byte_2 number = 0b100000000; number <= 0b111111111; number +=2)
+        for (byte_2 number = 0b100000000; number <= 0b111111111; number +=2) 
         {
             if (i == 30) return;
             int null_remannts = 0;
 
-            for (byte j = 0b10; j < 0b100000; j ++)
+            for (byte j = 0b10; j < 0b100000; j++)
                 if (!remnant(number, j))  break;
                 else null_remannts++;
 
@@ -161,11 +156,8 @@ public:
 
         for (size_t i = 0; i <= _degree; i++, bit <<= 1)
             if (bit & poly)     counter++;
-
-        if (!(counter % 2) && !counter)
-            return true;
-        else
-            return false;
+        // 0 
+        return (counter & 0b1) && !counter);
     }
 private:
     /// <summary>
@@ -176,14 +168,14 @@ private:
     /// <summary>
     /// instance of field
     /// </summary>
-    static Field_Galuas* instance;
+    static Field_Galois* instance;
 };
-Field_Galuas* Field_Galuas::instance = nullptr;
+Field_Galois* Field_Galois::instance = nullptr;
 
 }
 int main()
 {   
-    Field_theory::Field_Galuas a;
+    Field_theory::Field_Galois a;
     
     cout<<a.add(255, 255) << endl;
 

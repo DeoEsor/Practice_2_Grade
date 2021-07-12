@@ -14,116 +14,116 @@ namespace Tasks
         severity в следующем формате:
         [<Date> <Time>] [<severity>]: <data>
         В классе реализовать необходимые интерфейсы.*/
-    internal class Logger :IDisposable
+    public sealed class Logger :IDisposable
     {
-        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
+        private  ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
 
-        private static Logger instance;
-        private static StreamWriter fs;
-        internal enum Severity
+        private  StreamWriter _fs;
+        public  enum Severity
         {
             race, debug,
             information,
             warning, error, critical
         }
 
-        protected Logger()
-        {
-        }
-
+        public Logger(string filepath) =>
+        
+            _fs = new StreamWriter(filepath, true);
         
 
-        private Logger(string filepath)
+        public void Set_file(string filepath)
         {
-            fs = new StreamWriter(filepath, true);
+            Dispose();
+            _fs = new StreamWriter(filepath, true);
+            return;
         }
 
-        public static Logger getInstance(string name)
+        public int Log(string data, Severity severity)
         {
-            if (instance == null)
-                instance = new Logger(name);
-            return instance;
-        }
-
-        public static int Log(string data, Severity severity)
-        {
-            cacheLock.EnterWriteLock();
+            _cacheLock.EnterWriteLock();
+            //DNC Double not 
             try { 
-            fs.Write($"{Environment.NewLine}[{DateTime.Now}] [{severity}]: {data}");
+                _fs.Write($"{Environment.NewLine}[{DateTime.Now.Day}.{DateTime.Now.Month}.{DateTime.Now.Year}] " +
+                    $"[{DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}] [{severity}]: {data}");
             
                 return 0;
             }
+            catch(Exception e)
+            {
+                throw e;
+            }
             finally
             {
-                cacheLock.ExitWriteLock();
+                _cacheLock.ExitWriteLock();
             }
             
         }
+        ~Logger()=>
+            _fs.Dispose();
+        
 
-        public void Dispose()
+        public void Dispose()//ToDO ;_cacheLock clear
         {
-            fs.Flush();
-            fs.Close();
-            fs.Dispose();
+            _fs.Flush();
+            _fs.Close();
+            _fs.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 
     class Pragma
     {
         delegate void Message();
+        Message _mes;
         private struct syslog
         {
             public string data { get; set; }
             public Logger.Severity severity { get; set; }
         }
 
-        static syslog _syslog;
-        static Random random = new Random();
-        static Array values = Enum.GetValues(typeof(Logger.Severity));
+         syslog _syslog;
+        static Random _random = new Random();
+        static Array _values = Enum.GetValues(typeof(Logger.Severity));
 
-        public Logger Logger { get; set; }
-        public void Launch(string path)
-        {
-            Logger = Logger.getInstance(path);
-        }
+        public Logger Logger { get; }
+        public Pragma(string path)
+        => Logger = new Logger(path);
+        
 
-        private void  DeployMorning()
+        private void DeployMorning()
         {
             _syslog.data = "Morning Deploy";
-            _syslog.severity = (Logger.Severity)values.GetValue(random.Next(values.Length));
+            _syslog.severity = (Logger.Severity)_values.GetValue(_random.Next(_values.Length));
         }
-        private static void DeployEvening()
+        private void DeployEvening()
         {
             _syslog.data= "Evening Deploy" ;
-            _syslog.severity = (Logger.Severity) values.GetValue(random.Next(values.Length));
+            _syslog.severity = (Logger.Severity) _values.GetValue(_random.Next(_values.Length));
         }
 
         public int DoSmth()
         {
             try {
                 if (Logger==null) throw new DirectoryNotFoundException( "Logger or filepath can be equal null pls relaunch Pragma");
-            Message mes;
+
+            
             if (DateTime.Now.Hour < 12)
-                mes = DeployMorning;
+                _mes = DeployMorning;
             
             else
-                mes = DeployEvening;
+                _mes = DeployEvening;
             
-            mes();
+            _mes();
             Logger.Log(_syslog.data,_syslog.severity);
             return 0;
             }
             catch(Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
-                return -1;
+                throw e;
             }
         }
 
         public void Dispose()
-        {
-            Logger.Dispose();
-            Logger=null;
-        }
+        =>  Logger.Dispose();
     }
 }

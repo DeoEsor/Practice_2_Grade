@@ -16,7 +16,8 @@ namespace Tasks
 максимальный размер, то добавляемая запись замещает самую старую
 запись в кэше. Продемонстрировать работу класса.
 */
-class  Cash<T> where T : new()
+    sealed class Cash<T>
+        where T : new()
     {
 
         private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
@@ -94,8 +95,9 @@ class  Cash<T> where T : new()
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
-                return new T();
+                throw e;
+                //Console.WriteLine($"Error: {e.Message}");
+                //return new T();
             }
             finally
             {
